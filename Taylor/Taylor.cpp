@@ -3,6 +3,7 @@
 using namespace std;
 int sinDenom(int,int);
 int cosDenom(int,int);
+double calcErr(int, int, double*);
 double trigTaylor(int*, double*, int(*)(int,int));
 
 //Calculate the taylor approximation for sin(x) and cos(x)
@@ -31,7 +32,6 @@ double trigTaylor(int* N, double* x, int(*denom)(int,int))
     }
     return ans;
 }
-
 //Functions for the denominators in the taylor expansin of sine and cosine using horners rule
 int sinDenom(int n, int N)
 {
@@ -45,13 +45,18 @@ int cosDenom(int n, int N)
 //Calculate the next term in the Taylor approximation for sine and cosine
 double cosErr(int* N, double* x)
 {
-    int fact = (*N%2==0)?1:-1;      //equivalent to pow(-1,*N)
-    int denom = tgamma(2* *N);      //#TODO do this nicer (but how?)
-    return abs(pow(*x,2* *N)*fact/denom);
+    return calcErr(*N, 2* *N+1, x);
 }
 double sinErr(int* N, double* x)
 {
-    int fact = (*N%2==0)?1:-1;      //equivalent to pow(-1,*N)
-    int denom = tgamma(2* *N+1);    //#TODO do this nicer (but how?)
-    return abs(pow(*x,2* *N+1)*fact/denom);
+    return calcErr(*N+1, 2* *N+2,x);
+}
+double calcErr(int N, int formax, double* x)
+{
+    double err = abs(pow(*x,2* N));
+    for (int i = 1; i < formax; i++ )
+    {
+        err=err/i;
+    }
+    return err;
 }
